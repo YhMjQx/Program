@@ -1,11 +1,11 @@
 #include<stdio.h>
 int main()
 {
-	int arr[] = {  1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11 };//输入的k是数组里面的数
+	int arr[] = {  1, 3, 5, 7, 9, 2, 4, 8, 6, 10,11 };//输入的k是数组里面的数
 	int k = 0;
 
 	int sz = sizeof(arr) / sizeof(arr[0]);
-	printf("请输入k的值 (k的值应在0到10之间) :");
+	printf("请输入k的值 (k的值应在该数组之间) :");
 	scanf("%d", &k);
 	int left = 0;
 	int right = sz - 1;
@@ -20,7 +20,7 @@ int main()
 		{//
 			left = mid + 1;//
 		}//
-		else//
+		else//arr[i]既不比k大又不比k小，则只能arr[i]=k，只需输出此时的i即可 
 		{//
 			printf("找到了，下标是：%d", mid);//
 			break;//

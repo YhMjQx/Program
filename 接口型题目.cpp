@@ -80,14 +80,15 @@ void merge(int* nums1, int* nums2, int m, int n)//时间复杂度是O(M+N)，空间复杂度
 	int end = m + n - 1;
 	while (end1 >= 0 && end2 >= 0)
 	{
-		if (nums1[end1] > nums2[end2])
-		{
-			nums1[end--] = nums1[end1--];
-		}
-		else
-		{
-			nums1[end--] = nums2[end2--];
-		}
+		//if (nums1[end1] > nums2[end2])
+		//{
+		//	nums1[end--] = nums1[end1--];
+		//}
+		//else
+		//{
+		//	nums1[end--] = nums2[end2--];
+		//}
+		(nums1[end1] > nums2[end2]) ? nums1[end--] = nums1[end1--] : nums1[end--] = nums2[end2--];
 	}
 	while (end1 < 0 && end2 >= 0)
 	{

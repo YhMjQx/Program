@@ -1,50 +1,77 @@
-#include"DList.h";
-void TextList1()
+#include"Stack.h"
+StackText()
 {
-	LTNode* plist = ListInit();
+	ST st;
+	StackInit(&st);
 	for (int i = 0; i < 5; i++)
 	{
-		PushBack(plist, i);
+		StackPush(&st, i);
 	}
-	ListPrint(plist);
-	PopBack(plist);
-	ListPrint(plist);
-	PushFront(plist, 9);
-	ListPrint(plist);
-	//前插两个
-	PushFront(plist, 5);
-	PushFront(plist, 5);
-	ListPrint(plist);
-
-	//尾插两个
-	PushBack(plist, 4);
-	PushBack(plist, 4);
-	ListPrint(plist);
-
-	//删掉链表中数据第一个为2的节点
-	LTNode* pos = ListFind(plist, 2);
-	ListErase(pos);
-	ListPrint(plist);
-	//ListDestroy(plist);
-	//plist = NULL;
+	//StackPop(&st);
+	//StackPop(&st);
+	//怎么遍历并打印栈里面的数据呢
+	//由于最开始我定义的top是0，所以最后我的top表示的是栈里数据的个数，并不能充当下标使用，因为此时的top比下标大一
+	//所以我应该选择先让top减一，然后让top=0的时候独自在循环外打印出来
+	//当然，我也可以选择最开始让top=-1，这样这个问题就解决了，但是又会带来其他的问题
+	st.top -= 1;
+	while (!StackEmpty(&st))
+	{
+		printf("%d ", st.a[st.top]);
+		StackPop(&st);
+	}
+	printf("%d", st.a[st.top]);
+	StackDestroy(&st);
+}
+//OJ题：有效的括号
+//给定一个只包括'(', ')', '[', ']', '{', '}'的字符串s，判断字符串是否有效
+//有效字符串需满足：左括号必须用相同类型的右括号闭合；左括号必须以正确的顺序闭合
+bool isValid(char* s)//当然，要能有效地使用这个函数，必须将STDatatype定义为char
+{
+	ST st;
+	StackInit(&st);
+	while (*s)
+	{
+		//如果遍历到的字符串的字符是左括号就进栈
+		if (*s == '(' || *s == '[' || *s == '{')
+		{
+			StackPush(&st,*s);
+			++s;
+		}
+		//如果遍历到的字符串数组的字符不是左括号，而是右括号，则现在需要将进栈的左括号
+		//出栈并且于此时遍历到的右括号字符进行比较
+		else
+		{
+			//此时要判断，如果刚进来就是一个右括号的话此时栈中为空StackEmpty(&st)返回真值，此时根本没有左括号与右括号匹配，所以返回false
+			if (StackEmpty(&st))
+			{
+				StackDestroy(&st);
+				return false;
+			}
+			//用top接收左括号出栈
+			STDataType top = StackTop(&st);
+			//出栈了之后，用stackPop将栈里的数据个数减一		
+			StackPop(&st);
+			//现在进行比较,如果没有匹配上，就返回false,反之匹配上了就让s++
+			if ((*s == ')'&&top != '(')
+				|| (*s == ']'&&top != '{')
+				|| (*s == '}'&&top != '{'))
+			{
+				StackDestroy(&st);
+				return false;
+			}
+			else
+			{
+				++s;
+			}
+		}
+		//如果栈中不为空，说明此时stackEmpty(&st)返回值为假，此时栈中还有左括号未与右括号匹配，此时应该返回false
+		bool ret = stackEmpty(&st);
+		StackDestroy(&st);
+		return ret;
+	}
 }
 int main()
 {
-	TextList1();
-	return 0;
+	StackText();
+	//return 0;
 }
-//顺序表的优点：
-//1.可以用下标访问，也就是支持随机访问，需要随机访问结构的算法（排序，二分查找）可以很好地适用
-//2.cpu高速缓存命中率更高
-//顺序表的缺点：
-//1.投不中不插入和删除时效率低
-//2.连续的物理空间，空间不够了需要增容
-//（a.增容有一定的消耗 b.为了避免频繁的增容，一般我们都会按照倍数去增容，但这样用不完就会造成空间浪费）
-//
-//
-//链表（双向带头循环链表）
-//优点：1.任意位置插入删除效率高 - O(1)
-//      2.按需申请释放空间
-//缺点：1.不支持随机访问（用下标访问）意味着一些排序，二分查找的算法在这种结构上不适用
-//      2.链表存储一个值，同时还要存链接指针，但也有一定的作用，严格来说并不能算做什么缺点
-//      3.CPU高速缓存命中率更低

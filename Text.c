@@ -1,98 +1,127 @@
-#include"Queue.h"
-TextQueue1()
+#include"Stack.h"
+StackText()
 {
-	Queue q;
-	QueueInit(&q);
-	for (int i = 0; i < 5; i++)
-	{
-		QueuePush(&q, i);
+	ST st;
+	StackInit(&st);
+	for (int i = 0; i < 5; i++){
+		StackPush(&st, i);
 	}
-	QueuePop(&q);
-	printf("%d\n", QueueFront(&q));
-	printf("%d\n", QueueBack(&q));
-	printf("%d\n", QueueSize(&q));
-	QueueDestroy(&q);
+	//StackPop(&st);
+	//StackPop(&st);
+	//怎么遍历并打印栈里面的数据呢
+	//由于最开始我定义的top是0，所以最后我的top表示的是栈里数据的个数，并不能充当下标使用，因为此时的top比下标大一
+	//所以我应该选择先让top减一，然后让top=0的时候独自在循环外打印出来
+	//当然，我也可以选择最开始让top=-1，这样这个问题就解决了，但是又会带来其他的问题
+	st.top -= 1;
+	while (!StackEmpty(&st)){
+		printf("%d ", st.a[st.top]);
+		StackPop(&st);
+	}
+	printf("%d", st.a[st.top]);
+	StackDestroy(&st);
+}
+//OJ题：有效的括号
+//给定一个只包括'(', ')', '[', ']', '{', '}'的字符串s，判断字符串是否有效
+//有效字符串需满足：左括号必须用相同类型的右括号闭合；左括号必须以正确的顺序闭合
+bool isValid(char* s)//当然，要能有效地使用这个函数，必须将STDatatype定义为char
+{
+	ST st;
+	StackInit(&st);
+	while (*s){
+		//如果遍历到的字符串的字符是左括号就进栈
+		if (*s == '(' || *s == '[' || *s == '{'){
+			StackPush(&st,*s);
+			++s;
+		}
+		//如果遍历到的字符串数组的字符不是左括号，而是右括号，则现在需要将进栈的左括号
+		//出栈并且于此时遍历到的右括号字符进行比较
+		else{
+			//此时要判断，如果刚进来就是一个右括号的话此时栈中为空StackEmpty(&st)返回真值，此时根本没有左括号与右括号匹配，所以返回false
+			if (StackEmpty(&st)){
+				StackDestroy(&st);
+				return false;
+			}
+			//用top接收左括号出栈
+			STDataType top = StackTop(&st);
+			//出栈了之后，用stackPop将栈里的数据个数减一		
+			StackPop(&st);
+			//现在进行比较,如果没有匹配上，就返回false,反之匹配上了就让s++
+			if ((*s == ')'&&top != '(')
+				|| (*s == ']'&&top != '{')
+				|| (*s == '}'&&top != '{')){
+				StackDestroy(&st);
+				return false;
+			}
+			else{
+				++s;
+			}
+		}
+		//如果栈中不为空，说明此时stackEmpty(&st)返回值为假，此时栈中还有左括号未与右括号匹配，此时应该返回false
+		bool ret = stackEmpty(&st);
+		StackDestroy(&st);
+		return ret;
+	}
 }
 int main()
 {
-	TextQueue1();
-	return 0;
+	StackText();
+	//return 0;
 }
-//仅用两个队列实验一个先入后出的栈的4种基本操作（push,top,pop,emrty）
-//实现MySatack类：
-	//void push(int x) 将元素x压入栈顶
-	//int pop()移除并返回栈顶元素
-	//int top()返回栈顶元素
-	//boolean empty()如果栈是空的，返回true；否则返回false
+//用两个栈实现先入先出的队列的操作，队列应当支持队列的所有基本操作（Push，Pop，Peek，empty）
+//实现MyQueue类：
+//void push(int x) 将元素x推到队列的末尾
+//int pop() 从队列的开头移除并返回元素
+//int peek() 返回队列开头的元素
+//boolean empty() 如果队列为空返回true，反之返回false
 //核心思路：
-//1.入数据，往不为空的对列入，保持另一个队列为空
-//2.出数据，依次出对头的数据，转移到另一个队列保存，只剩最后一个数据的时候，再pop
-typedef struct
-{
-	Queue q1;
-	Queue q2;
-}MyStack;
-MyStack* myStackCreat()
-{
-	MyStack* st = (MyStack*)malloc(sizeof(MyStack));
-	QueueInit(&st->q1);
-	QueueInit(&st->q2);
-	return st;
+//1.pushST栈用来入数据，popST栈用来出数据
+//2.出数据的时候，首先需要将pushST栈内的数据转移到popST栈内，然后从popST栈出数据
+
+typedef struct{
+	ST pushST;
+	ST popST;
+}MyQueue;
+
+MyQueue* myQueueCreate(){
+	MyQueue* q = (MyQueue*)malloc(sizeof(MyQueue));
+	StackInit(&q->pushST);
+	StackInit(&q->popST);
 }
-void myStackPush(MyStack* obj, int x)
-{
-	if (!QueueEmpty(&obj->q1))
-	{
-		QueuePush(&obj->q1, x);
-	}
-	else
-	{
-		QueuePush(&obj->q2, x);
-	}
+
+void myQueuePush(MyQueue* obj,int x){
+	StackPush(&obj->pushST, x);
 }
-void myStackPop(MyStack* obj)
-{
-	//假设其中一个队列为空，另一个不为空
-	Queue* emptyQ = &obj->q1; 
-	Queue* nonemptyQ = &obj->q2;
-	//然后进行判断，如果假设和实际情况不符，那么改成正确的情况
-	if (!QueueEmpty(&obj->q1))//此时说明q1不为空
-	{
-		emptyQ = &obj->q2;
-		nonemptyQ = &obj->q1;
+//如果popST栈内有数据，那么就直接出数据
+//如果popST栈内没有数据，那么就先把pushST栈内的数据移动到popST栈内，然后再从popST栈出数据
+int myQueuePop(MyQueue* obj){
+	if (StackEmpty(&obj->popST)){
+		while (StackEmpty(&obj->pushST)){
+			StackPush(&obj->popST, StackTop(&obj->pushST));
+			StackPop(&obj->pushST);
+		}
 	}
-	//让不为空的队列中的元素转移到空队列当中去，当剩下最后一个没有转移的时候，将这个元素返回并删除
-	while (QueueSize(nonemptyQ) > 1)
-	{
-		QueuePush(emptyQ, QueueFront(nonemptyQ));
-		QueuePop(nonemptyQ);
-	}
-	//上述操作完成后，拿出最后一个，删除并返回
-	int top = QueueFront(nonemptyQ);
-	QueuePop(nonemptyQ);
-	return top;
+	//如果popST不为空，那么就直接从其中出数据就好了
+	int front = StackTop(&obj->popST);
+	StackPop(&obj->popST);
+	return front;
 }
-int myStackTop(MyStack* obj)
-{
-	if (!QueueEmpty(&obj->q1))
-	{
-		return QueueBack(&obj->q1);
+//返回队列开头的数据，但是队列有可能为空
+int mystackPeek(MyQueue* obj){
+	assert(obj);
+	if (StackEmpty(&obj->popST)){
+		while (StackEmpty(&obj->pushST)){
+			StackPush(&obj->popST, StackTop(&obj->pushST));
+			StackPop(&obj->pushST);
+		}
 	}
-	else
-	{
-		return QueueBack(&obj->q2);
-	}
+	return StackTop(&obj->popST);
 }
-bool myStackEmpty(MyStack* obj)
-{
-	//由于我是用两个队列实现栈，所以只要两个队列不同时为空，我就不是空
-	return QueueEmpty(&obj->q1) && QueueEmpty(&obj->q2);
+bool myQueueEmpty(MyQueue* obj){
+	return StackEmpty(&obj->popST) && StackEmpty(&obj->pushST);
 }
-void myStackFree(MyStack* obj)
-{
-	//只能调用函数接口，不能直接操作结构
-	//而且注意，我是用MyStack嵌套的Queue，而Queue才是真实指向队列的，所以应该先释放队列，再释放MyStack
-	QueueDestroy(&obj->q1);
-	QueueDestroy(&obj->q2);
-	free(obj);
+void myQueueFree(MyQueue* obj){
+	assert(obj);
+	StackDestroy(&obj->popST);
+	StackDestroy(&obj->pushST);
+	StackDestroy(&obj);
 }

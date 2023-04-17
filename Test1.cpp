@@ -1,105 +1,105 @@
 #include<iostream>
+#include<vector>
 using namespace std;
-//改文件中的所有地址均为暂时性的，每执行一次稳健，分配的地址都不一样，在该文件表示出来只是为了更好的演示内存模块
 
-class BB{
+//有了一个或一个以上的纯虚函数，该类就被称为抽象类
+class Shape{
 public:
-
-	int bb_;
-
+	virtual void Draw() = 0;
+	//多台基类的析构函数就要定义为虚析构函数
+	//当多态基类的析构函数不定义为虚析构函数时，派生类的析构函数都不是虚的
+	//虚析构函数的特点是：当我们在父类当中，通过virtual修饰析构函数之后
+	//我们通过父类的指针再去指向子类的对象，然后通过delete接父类指针就可以释放掉子类的对象。
+	virtual ~Shape(){
+		cout << "~Shape..." << endl;
+	}
 };
 
-class B1 :virtual public BB{
+class Circle :public Shape{
 public:
-
-	int b1_;
-
+	//如果一个派生类也不实现纯虚函数，那么这个派生类也变成了抽象类，则，纯虚函数的实现就要交给派生类的派生类了
+	void Draw(){
+		cout << "Circle::Draw()..." << endl;
+	}
+	~Circle(){
+		cout << "~Circle..." << endl;
+	}
 };
 
-class B2 :virtual public BB{
+class Square :public Shape{
 public:
-
-	int b2_;
-
+	void Draw(){
+		cout << "Square::Draw()..." << endl;
+	}
+	~Square(){
+		cout << "~Square..." << endl;
+	}
 };
 
-class DD :public B1, public B2{
+class Rectangle:public Shape{
 public:
+	void Draw(){
+		cout << "Rectangle::Draw()..." << endl;
+	}
+	~Rectangle(){
+		cout << "~Rectangle..." << endl;
+	}
+};
 
-	int dd_;
+void DrawAllShape(const vector<Shape*>& v){
+	vector<Shape*>::const_iterator it;
+	for (it = v.begin(); it != v.end(); ++it){
+		//将基类和派生类当成一致的观点来看待)(*it) = Shape*
+		//如果积累没有将该函数定义为纯虚函数，那么这里就会调用两次无意义的基类Draw
+		//但如果定义的是纯虚函数，那么这里就是基类指针指向派生类的虚函数调用
+		(*it)->Draw();
+	}
+}
 
+void DeleteAllShape(const vector<Shape*>& v){
+	vector<Shape*>::const_iterator it;
+	for (it = v.begin(); it != v.end(); ++it){
+		delete(*it);
+		//*it就相当于Shape*,他实际指向的是一个派生类对象，通过的抽象类的虚析构函数，我们可以做到
+		//先调用派生类的析构函数，然后再调用抽象类的析构函数，这样就不会有内存泄露的风险
+	}
+}
+
+//实现一个简单的工厂模式
+class ShapeFactory{
+public:
+	static Shape* CreateShape(const string& name){
+		Shape* ps;
+		if (name == "Circle"){
+			ps = new Circle;
+		}
+		else if (name == "Square"){
+			ps = new Square;
+		}
+		else if (name == "Rectangle"){
+			ps = new Rectangle;
+		}
+		return ps;
+	}
 };
 int main(){
 
-	cout << sizeof(BB) << endl;
-	cout << sizeof(B1) << endl; 
-	cout << sizeof(B2) << endl;
-	cout << sizeof(DD) << endl;
-	
-	B1 b1;
-	long** p;
-	cout << &b1 << endl;	//004FFBAC
-	cout << &b1.b1_ << endl;//004FFBB0
-	cout << &b1.bb_ << endl;//004FFBB4
+	vector<Shape*> v;
+	Shape* ps;
+	//ps = new Circle;
+	//v.push_back(ps);
+	//ps = new Square;
+	//v.push_back(ps);
 
-	p = (long**)&b1;
-	cout << p[0][0] << endl;// - 0
-	cout << p[0][1] << endl;// - 8
-	//第一个空间为空格是虚基类表指针（vbptr）,指向虚基类表（virtual base table）
-	//此时本类地址就是虚基类表指针地址就是本类地址
-	//___________
-//p-> |  p[0]   |           vbptr   ____________ vbtl 
-	//|		    |//004FFBAC - &B1 ->| p[0][0]  | - 本类地址与虚基类表指针地址的差 - 此时就是0（此时没有虚函数）
-	//-----------                   ------------   
-	//|         |                   |  p[0][1] | - 虚基类地址与虚基类表指针地址的差 - 此时为8
-	//|    b1_  |//004FFBB0         ------------
-	//-----------
-	//|         |
-	//|   bb_   |//004FFBB4 - 虚基类部分
-	//-----------
-	//以上是BB对象的内存模型
+	Shape* ps;
+	ps = ShapeFactory::CreateShape("Circle");
+	v.push_back(ps);
+	ps = ShapeFactory::CreateShape("Square");
+	v.push_back(ps);
+	ps = ShapeFactory::CreateShape("Rectangle");
+	v.push_back(ps);
 
-
-	DD dd;
-	cout << &dd << endl;//00BBFD04
-	cout << &dd.dd_ << endl;//00BBFD14
-	cout << &dd.b1_ << endl;//00BBFD08
-	cout << &dd.b2_ << endl;//00BBFD10
-	cout << &dd.bb_ << endl;//00BBFD18
-
-	p = reinterpret_cast<long**>(&dd);
-	cout << p[0][0] << endl;
-	cout << p[0][1] << endl;
-	cout << p[2][0] << endl;
-	cout << p[2][1] << endl;
-//	
-//	_________		___________  ______      <-   00BBFD04-&dd
-//	|0 p[0][0]|	<-	|vbptr p[0]|	   |
-//	----------		-----------   b1   |     <-   00BBFD08-&dd.b1_ 
-//	|___20____|		|dd.b1_ p[1]|      |
-//					-----------  ------ 								   
-//	__________	<-	|vbptr p[2] |      |							
-//	|0 p[2][1]|		-----------	  b2   | 								
-//	-----------		|dd.b2_ p[3]|	   |      <-  00BBFD10-&dd.b2_								
-//	|__12_____|		-----------  ------								
-//					|dd.dd_ p[4]|			  <-  00BBFD14-&dd.dd_ 
-//					-----------  ------										
-//					|dd.bb_ p[5]|   BB  |	  <-  00BBFD18-&dd.bb_ = pp											
-//					-----------  ------							
-
-	//虚基类是通过虚基类表指针来找到的，通过虚基类表指针的偏移位置找到的
-
-	//上面我们是用对象来直接访问的，那先面我们就来看看用指针访问的情况
-	BB* pp;
-	pp = &dd;
-	pp->bb_;
-	//这时候就涉及到间接访问了，通过调试发现，pp指针指向的内容和&dd指针指向的内容是不一样的
-	//例如：pp 0x00b3f814 {bb_ = -858993460 }	
-	//	 &dd 0x00b3f800 {dd_ = -858993460 }	
-	//编译时刻已经固定了内存模型，所以通过指针来访问成员，是间接访问的，运行时会对改地址进行调整
-	//此过程需要运行时的支持，需要通过虚基类表指针 找到 虚基类地址与虚基类表指针的地址的差，也就是虚基类表的第二项
-	//实际上的pp指向的是BB这块空间
-
-
+	DrawAllShape(v);
+	DeleteAllShape(v);
 	return 0;
 }

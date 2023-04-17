@@ -1,60 +1,21 @@
 #include<iostream>
 using namespace std;
 
-class Furniture{
+
+//对于一个没有任何接口的类，如果想要将它定义为抽象类，只能将虚析构函数定义为纯虚析构函数
+//通常情况下在基类中的纯虚函数是不需要实现的，但是纯虚析构函数（只需用给出一个空的实现即可）就是个例外
+class Base{
 public:
-	Furniture(int weight) :weight_(weight){
-
-	}
-	int weight_;
-	
-
-};
-class Bed:public Furniture{
-public:
-	Bed(int weight) :Furniture(weight){
-
-	}
-	void Sleep(){
-		cout << "Sleep..." << endl;
+	virtual ~Base() = 0
+	{
+		cout << "virtual ~Base() = 0" << endl;
 	}
 };
 
-class Sofa: public Furniture{
-public:
-	Sofa(int weight) :Furniture(weight){
-
-	}
-	void WatchTV(){
-		cout << "WatchTV..." << endl;
-	}
-};
-
-class SofaBed :public Bed, public Sofa{
-public:
-	SofaBed(int weight) : Bed(weight), Sofa(weight){
-		FoldIn();
-	}
-
-	void FoldOut(){
-		cout << "FoldOut..." << endl;
-	}
-
-	void FoldIn(){
-		cout << "FoldInt..." << endl;
-	}
-
+class Drived :public Base{
 
 };
-
 int main(){
-	SofaBed sb(100);
-	//sb.weight_ = 39;
-	//sb.weight_ = 93;
-	//以上的指定是不明确的，应该显示指定
-
-	sb.Bed::weight_ = 93;
-	sb.Sofa::weight_ = 39;
-
+	Drived d;
 	return 0;
 }

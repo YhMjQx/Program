@@ -50,7 +50,7 @@ void test2(){
 	
 }
 
-//3.整个类模板化 - 将这个对象类型模板化进行传递
+//3.整个类模板化 - 将整个对象类型模板化进行传递
 template<class T>
 void PrintPerson3( T& p ){
 	p.ShowPerson();

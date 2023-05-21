@@ -1,0 +1,38 @@
+﻿生成启动时间为 2023/5/21 16:04:57。
+     1>项目“D:\C++\实战项目\演讲比赛流程管理系统\演讲比赛流程管理系统\演讲比赛流程管理系统.vcxproj”在节点 2 上(Build 个目标)。
+     1>ClCompile:
+         D:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt speechManager.cpp
+         speechManager.cpp
+     1>d:\c++\实战项目\演讲比赛流程管理系统\演讲比赛流程管理系统\speechmanager.cpp(55): warning C4018: “<”: 有符号/无符号不匹配
+     1>d:\c++\实战项目\演讲比赛流程管理系统\演讲比赛流程管理系统\speechmanager.cpp(377): warning C4018: “<”: 有符号/无符号不匹配
+     1>d:\program files (x86)\microsoft visual studio 12.0\vc\include\numeric(20): warning C4244: “=”: 从“double”转换到“float”，可能丢失数据
+                 d:\program files (x86)\microsoft visual studio 12.0\vc\include\numeric(31): 参见对正在编译的函数 模板 实例化“_Ty std::_Accumulate<std::_Deque_unchecked_iterator<_Mydeque>,_Ty,_Fn2>(_InIt,_InIt,_Ty,_Fn2)”的引用
+                 with
+                 [
+                     _Ty=float
+         ,            _Mydeque=std::_Deque_val<std::_Deque_simple_types<double>>
+         ,            _Fn2=std::plus<void>
+         ,            _InIt=std::_Deque_unchecked_iterator<std::_Deque_val<std::_Deque_simple_types<double>>>
+                 ]
+                 d:\program files (x86)\microsoft visual studio 12.0\vc\include\numeric(39): 参见对正在编译的函数 模板 实例化“_Ty std::accumulate<_InIt,_Ty,std::plus<void>>(_InIt,_InIt,_Ty,_Fn2)”的引用
+                 with
+                 [
+                     _Ty=float
+         ,            _InIt=std::_Deque_iterator<std::_Deque_val<std::_Deque_simple_types<double>>>
+         ,            _Fn2=std::plus<void>
+                 ]
+                 d:\c++\实战项目\演讲比赛流程管理系统\演讲比赛流程管理系统\speechmanager.cpp(197): 参见对正在编译的函数 模板 实例化“_Ty std::accumulate<std::_Deque_iterator<std::_Deque_val<std::_Deque_simple_types<double>>>,float>(_InIt,_InIt,_Ty)”的引用
+                 with
+                 [
+                     _Ty=float
+         ,            _InIt=std::_Deque_iterator<std::_Deque_val<std::_Deque_simple_types<double>>>
+                 ]
+       Link:
+         D:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\C++\实战项目\演讲比赛流程管理系统\Debug\演讲比赛流程管理系统.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\C++\实战项目\演讲比赛流程管理系统\Debug\演讲比赛流程管理系统.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\C++\实战项目\演讲比赛流程管理系统\Debug\演讲比赛流程管理系统.lib" /MACHINE:X86 Debug\speechManager.obj
+         "Debug\演讲比赛流程管理系统.obj"
+         演讲比赛流程管理系统.vcxproj -> D:\C++\实战项目\演讲比赛流程管理系统\Debug\演讲比赛流程管理系统.exe
+     1>已完成生成项目“D:\C++\实战项目\演讲比赛流程管理系统\演讲比赛流程管理系统\演讲比赛流程管理系统.vcxproj”(Build 个目标)的操作。
+
+生成成功。
+
+已用时间 00:00:01.09

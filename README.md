@@ -1,4 +1,4 @@
-### Hi there 👋
+###Try,hardwork,study,excercise，come on!!!
 
 <!--
 **YhMjQx/YhMjQx** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.

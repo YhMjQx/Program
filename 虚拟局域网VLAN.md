@@ -31,7 +31,7 @@
 
 - 创建VLAN（全局模式下）
 
-```swift
+```shell
 #在全局模式创建
 Switch(config)#vlan 2
 Switch(config)#vlan 3
@@ -45,11 +45,11 @@ Switch(vlan)#vlan 10
 
 ![image-20230720205348406](C:\Users\hp\AppData\Roaming\Typora\typora-user-images\image-20230720205348406.png)
 
-- 将接口加入VLAN
+- 将接口（交换机上的接口）加入VLAN
 
   - 需要去指定接口的模式
 
-    ```swift
+    ```shell
     Switch#conf t
     Switch(config)#int f0/10
     Switch(config-if)#switchport mode access   
@@ -60,49 +60,49 @@ Switch(vlan)#vlan 10
 
     - 这是加入单个接口
 
-    ```swift
+    ```shell
     Switch#conf t
     Switch(config)#int f0/10
     Switch(config-if)#switchport mode access   
     #这种access模式一般是用来链接客户机的
     
     Switch(config-if)#switchport access vlan 2
-    #这条命令将f/10这个接口计入vlan2
+    #这条命令将f0/10这个接口计入vlan2
     ```
 
     
 
     - 这是加入多个接口范围
 
-    ```swift
+    ```shell
     Switch#conf t
     Switch(config)#int range f0/20-24
     Switch(config-if-range)#switchport mode access
     #上面是设置模式
     
     Switch(config-if-range)#switchport access vlan 3
-    #这条命令才是将接口加入vlan3
+    #这条命令是将接口f0/20-24加入vlan3
     ```
 
     
 
 - 其他配置命令
 
-  - 查看vlan细节
+  - 简要查看vlan细节
 
-  ```swift
+  ```shell
   Switch#show vlan brief 
   ```
 
   - 查看特定vlan（例如查看vlan2）
 
-  ```swift
+  ```shell
   Switch#show vlan id 2
   ```
 
   - 删除vlan（例如删除vlan10）
 
-  ```swift
+  ```shell
   #在全局模式下删除
   Switch(config)#no vlan 10
   
@@ -113,8 +113,51 @@ Switch(vlan)#vlan 10
 
   **通过在交换机上创建vlan，将不同主机加入到对应vlan后，在同一交换机下，相同vlan区域的主机可以直接通信，不同vlan区域中的主机无法直接通信**
 
-# vlan trunk
+# vlan trunk 
 
 **同一vlan跨交换机进行通信 **
 
-![image-20230720214017164](C:\Users\hp\AppData\Roaming\Typora\typora-user-images\image-20230720214017164.png)
+![image-20230722120439868](C:\Users\hp\AppData\Roaming\Typora\typora-user-images\image-20230722120439868.png)
+
+目的：实现相同VLAN跨交换机实现通信
+
+交换机接口模式（默认是动态自动（dynamic auto））
+
+- 连接主机时：协商出的结果是access
+
+- 连接交换机时：（要想链路是何种模式就让两台交换机都设置为该模式）
+
+  - 动态自动------动态自动       协商结果access
+  - 动态自动------动态企望       协商结果trunk
+  - 动态自动------access           协商结果access
+  - 动态自动------trunk             trunk
+
+- trunk模式协商结果
+
+  ![image-20230721183114078](C:\Users\hp\AppData\Roaming\Typora\typora-user-images\image-20230721183114078.png)
+
+  查看接口模式
+
+```shell
+Switch#show int f0/1 switchport
+```
+
+### Trunk封装
+
+- 思科私有的
+
+  - ISL
+
+    ![image-20230722110457482](C:\Users\hp\AppData\Roaming\Typora\typora-user-images\image-20230722110457482.png)
+
+    
+
+- 标准的
+
+  - 802.1q，不同厂商的交换机使用的共有标准
+
+    ![image-20230722110551541](C:\Users\hp\AppData\Roaming\Typora\typora-user-images\image-20230722110551541.png)
+
+    
+
+  
